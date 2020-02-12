@@ -3,8 +3,9 @@ const ctx = canvas.getContext("2d");
 
 const ctverec = 20;
 
-const foodImg = new Image();
-foodImg.src = "img/food1.png";
+// Načtení obrázku
+const obrazekJidla = new Image();
+obrazekJidla.src = "img/jidlo.png";
 
 let snake = [];
 
@@ -46,10 +47,10 @@ function pohyb(event){
 }
 
 // Funkce k prověření kolize
-
-function collision(hlava, pole){
+function kolize(hlava, pole){
     for(let i = 0; i < pole.length; i++){
         if(hlava.x == pole[i].x && hlava.y == pole[i].y){
+            location.reload();
             return true;
         }
     }
@@ -57,30 +58,31 @@ function collision(hlava, pole){
 }
 
 // Funkce pro vykreslení na canvas
-
 function vykresli(){
+    
+    ctx.beginPath();
+    ctx.strokeStyle = "white";
+    ctx.fillStyle = "white";
+    ctx.rect(0, 0, 700, 700);
+    ctx.stroke();
+    ctx.fill();
 
     for(let i = 0; i < snake.length; i++){
         ctx.fillStyle = (i == 0)? "green" : "white";
         ctx.fillRect(snake[i].x, snake[i].y, ctverec, ctverec);
 
-        ctx.strokeStyle = "red";
+        ctx.strokeStyle = "black";
         ctx.strokeRect(snake[i].x,snake[i].y,ctverec, ctverec);
     }
 
-    /*ctx.fillStyle = "red";
-    ctx.fillRect(jidlo.x, jidlo.y, ctverec, ctverec);*/
-
-    ctx.drawImage(foodImg, jidlo.x, jidlo.y);
+    // Vykreslení jídla
+    ctx.drawImage(obrazekJidla, jidlo.x, jidlo.y);
     
     // Aktuální pozice hlavy
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
 
-    /*// Odebrání poslední části hada
-    snake.pop();*/
-
-    // Směr
+    // Určení směru
     if(s == "DOLEVA"){
         snakeX -= ctverec;
     }
@@ -107,22 +109,23 @@ function vykresli(){
     }
 
     // Posunutí hada
-
     let novaHlava = {
         x : snakeX,
         y : snakeY
     }
 
     // Konec hry
-    if(snakeX < 0 || snakeX > 35 * ctverec || snakeY > 35 * ctverec || snakeY < 0 || collision(novaHlava, snake)){
-        clearInterval(hra);
+    if(snakeX < 0 || snakeX > 34 * ctverec || snakeY > 34 * ctverec || snakeY < 0 || kolize(novaHlava, snake)){
+        location.reload();
     }
 
     snake.unshift(novaHlava);
 
+    // Vykreslení bodů
     ctx.font = "45px Calibri";
     ctx.fillStyle = "black";
     ctx.fillText(skore, 30, 35);
 }
 
+// Nastavení intervalu
 let hra = setInterval(vykresli,100);
